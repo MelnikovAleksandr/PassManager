@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "PassManager"
 include ':app'
+include ':json-lib'
+include ':moshi-json-parser'
