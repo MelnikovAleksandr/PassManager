@@ -34,11 +34,36 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // Lifecycle
+    def lifecycleVersion = "2.6.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+
+    // Coroutines
+    def coroutinesVersion = "1.6.4"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+
+    //Orbit MVI
+    def orbitVersion = "4.6.1"
+    implementation "org.orbit-mvi:orbit-core:$orbitVersion"
+    implementation "org.orbit-mvi:orbit-viewmodel:$orbitVersion"
+
+    // Koin for Android
+    def koin_version = "3.4.0"
+    implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-core:$koin_version"
+
+    //json-rpc-android
+    implementation project(path: ':json-lib')
+    implementation project(path: ':moshi-json-parser')
 }
