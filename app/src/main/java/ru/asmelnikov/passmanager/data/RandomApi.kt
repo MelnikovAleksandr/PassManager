@@ -11,5 +11,5 @@ interface RandomApi {
         @JsonRpc("length") length: Int,
         @JsonRpc("characters") characters: String,
         @JsonRpc("replacement") replacement: Boolean
-    ): RandomResult
+    ): ApiResult
 }

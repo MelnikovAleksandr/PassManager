@@ -85,7 +85,7 @@ class FragmentMain : Fragment() {
                     )
 
                     withContext(Dispatchers.Main) {
-                        binding.resultTextView.text = random.toString()
+                        binding.resultTextView.text = random.random.data.toString().replace("[\\[\\]]".toRegex(), "")
                     }
                 } catch (e: Throwable) {
                     e.printStackTrace()
