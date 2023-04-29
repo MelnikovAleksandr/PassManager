@@ -1,8 +1,14 @@
 package ru.asmelnikov.passmanager.data
 
-import com.squareup.moshi.Json
+data class ApiResult(
+    val random: RandomResult,
+    val bitsUsed: Int,
+    val bitsLeft: Int,
+    val requestsLeft: Int,
+    val advisoryDelay: Int
+)
 
 data class RandomResult(
-    @Json(name = "data")
-    val data: List<String>
+    val data: List<String>,
+    val completionTime: String
 )
