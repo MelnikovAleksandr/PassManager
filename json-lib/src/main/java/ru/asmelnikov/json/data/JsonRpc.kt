@@ -64,7 +64,7 @@ fun <T> createInvocationHandler(
             val methodName = methodAnnotation.value
             val parameters = method.jsonRpcParameters(args, service)
 
-            val request = JsonRpcRequest(id, methodName, parameters)
+            val request = JsonRpcRequest(id = id, method = methodName, params = parameters)
 
             val serverCallInterceptor = ServerCallInterceptor(client)
             val finalInterceptors = interceptors.plus(serverCallInterceptor)

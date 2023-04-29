@@ -1,5 +1,6 @@
 package ru.asmelnikov.json.data
 
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -17,8 +18,10 @@ class JsonRpcClientImpl(
     private val requestConverter: RequestConverter,
     private val responseParser: ResponseParser
 ) : JsonRpcClient {
+
+    private val mediaType = "application/json".toMediaType()
     override fun call(jsonRpcRequest: JsonRpcRequest): JsonRpcResponse {
-        val requestBody = requestConverter.convert(jsonRpcRequest).toByteArray().toRequestBody()
+        val requestBody = requestConverter.convert(jsonRpcRequest).toByteArray().toRequestBody(mediaType)
         val request = Request.Builder()
             .post(requestBody)
             .url(baseurl)

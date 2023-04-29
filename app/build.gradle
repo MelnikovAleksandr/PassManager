@@ -74,4 +74,9 @@ dependencies {
     //json-rpc-android
     implementation project(path: ':json-lib')
     implementation project(path: ':moshi-json-parser')
+
+    //network
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.1"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
 }
