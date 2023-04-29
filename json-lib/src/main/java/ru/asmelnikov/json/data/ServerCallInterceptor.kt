@@ -7,7 +7,7 @@ import ru.asmelnikov.json.domain.protocol.JsonRpcResponse
 class ServerCallInterceptor(
     private val client: JsonRpcClient
 ) : JsonRpcInterceptor {
-    override fun interceptor(chain: JsonRpcInterceptor.Chain): JsonRpcResponse {
+    override fun intercept(chain: JsonRpcInterceptor.Chain): JsonRpcResponse {
         return client.call(chain.request())
     }
 }
