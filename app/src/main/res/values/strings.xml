@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">PassManager</string>
+    <string name="generate_your_safe_password">Generate your safe password!</string>
+    <string name="choose_the_password_length">Choose the password length</string>
+    <string name="create_password">Create password</string>
 </resources>
