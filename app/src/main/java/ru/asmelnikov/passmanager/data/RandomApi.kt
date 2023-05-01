@@ -1,6 +1,7 @@
 package ru.asmelnikov.passmanager.data
 
 import ru.asmelnikov.json.domain.JsonRpc
+import ru.asmelnikov.passmanager.data.model.ApiResult
 
 interface RandomApi {
 

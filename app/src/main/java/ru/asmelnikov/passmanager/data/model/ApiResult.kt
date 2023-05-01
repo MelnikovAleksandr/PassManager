@@ -1,4 +1,4 @@
-package ru.asmelnikov.passmanager.data
+package ru.asmelnikov.passmanager.data.model
 
 data class ApiResult(
     val random: RandomResult,
