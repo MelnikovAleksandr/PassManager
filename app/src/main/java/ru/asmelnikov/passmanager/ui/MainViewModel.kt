@@ -1,60 +1,30 @@
 package ru.asmelnikov.passmanager.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import ru.asmelnikov.json.domain.JsonRpcException
+import org.orbitmvi.orbit.ContainerHost
+import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.viewmodel.container
 import ru.asmelnikov.passmanager.data.Resource
 import ru.asmelnikov.passmanager.data.model.ApiResponse
-import ru.asmelnikov.passmanager.data.model.ApiResult
+import ru.asmelnikov.passmanager.data.model.RandomSideEffects
+import ru.asmelnikov.passmanager.data.model.RandomState
 import ru.asmelnikov.passmanager.data.repository.RandomRepository
 
 class MainViewModel(
     private val repository: RandomRepository
-) : ViewModel() {
+) : ViewModel(), ContainerHost<RandomState, RandomSideEffects> {
 
-    private var _randomLiveData = MutableLiveData<Resource<ApiResult>>()
+    override val container = container<RandomState, RandomSideEffects>(RandomState())
 
-    val randomLiveData: LiveData<Resource<ApiResult>>
-        get() = _randomLiveData
-
-    fun loadRandom(
-        apiResponse: ApiResponse
-    ) {
-        viewModelScope.launch {
-            try {
-                CoroutineScope(Dispatchers.IO).launch {
-                    _randomLiveData.postValue(Resource.Loading())
-                    val result = repository.getRandom(apiResponse)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        _randomLiveData.value = result
-                    }
-                }
-            } catch (e: Throwable) {
-                e.printStackTrace()
-                if (e is JsonRpcException) {
-                    CoroutineScope(Dispatchers.Main).launch {
-//                            Toast.makeText(
-//                                requireContext(),
-//                                "JSON-RPC error with code ${e.code} and message ${e.message}",
-//                                Toast.LENGTH_LONG
-//                            ).show()
-
-                    }
-                } else {
-                    CoroutineScope(Dispatchers.Main).launch {
-//                        Toast.makeText(
-//                            requireContext(),
-//                            e.message ?: e.toString(),
-//                            Toast.LENGTH_LONG
-//                        ).show()
-                    }
-                }
-            }
+    fun loadRandom(apiResponse: ApiResponse) = intent {
+        reduce { state.copy(isLoading = true, result = Resource.Loading()) }
+        val result = repository.getRandom(apiResponse)
+        reduce {
+            state.copy(
+                result = result,
+                isLoading = false
+            )
         }
     }
 }

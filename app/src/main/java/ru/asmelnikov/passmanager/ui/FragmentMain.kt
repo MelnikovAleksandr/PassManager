@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.android.material.slider.Slider
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.orbitmvi.orbit.viewmodel.observe
 import ru.asmelnikov.passmanager.data.Resource
 import ru.asmelnikov.passmanager.data.model.ApiResponse
+import ru.asmelnikov.passmanager.data.model.RandomSideEffects
+import ru.asmelnikov.passmanager.data.model.RandomState
 import ru.asmelnikov.passmanager.databinding.FragmentMainBinding
 import ru.asmelnikov.passmanager.utils.Constants.API_KEY
 import ru.asmelnikov.passmanager.utils.Constants.CHARACTERS
@@ -58,32 +62,15 @@ class FragmentMain : Fragment() {
             })
 
             copyButton.setOnClickListener {
-                val clipboard = resultTextView.context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
+                val clipboard =
+                    resultTextView.context.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager?
                 val clip = ClipData.newPlainText("Order Number", resultTextView.text.toString())
                 clipboard?.setPrimaryClip(clip)
-                Toast.makeText(requireContext(), "Text copied to clipboard", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Text copied to clipboard", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
-
-        viewModel.randomLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Success -> {
-                    binding.apply {
-                        resultTextView.text =
-                            it.data?.random?.data.toString().replace("[\\[\\]]".toRegex(), "")
-                        progressBar.isVisible = false
-                    }
-                }
-                is Resource.Loading -> {
-                    binding.progressBar.isVisible = true
-                }
-                is Resource.Error -> binding.apply {
-                    resultTextView.text = it.message
-                    progressBar.isVisible = false
-                }
-            }
-        }
-
+        viewModel.observe(state = ::render, sideEffect = ::handleSideEffects, lifecycleOwner = this)
     }
 
     override fun onDestroyView() {
@@ -91,4 +78,42 @@ class FragmentMain : Fragment() {
         _binding = null
     }
 
+    private fun render(state: RandomState) {
+        binding.apply {
+            Log.d("MainViewModel", "render: $state")
+            when (state.result) {
+                is Resource.Error -> {
+                    resultTextView.text = state.result?.message.toString()
+                    progressBar.isVisible = false
+                }
+                is Resource.Loading -> {
+                    progressBar.isVisible = state.isLoading
+                }
+                is Resource.Success -> {
+                    resultTextView.text = state.result?.data?.random?.data.toString()
+                        .replace("[\\[\\]]".toRegex(), "")
+                    progressBar.isVisible = false
+                }
+                else -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "Click to search button!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun handleSideEffects(sideEffects: RandomSideEffects) {
+        when (sideEffects) {
+            is RandomSideEffects.Toast -> {
+                Toast.makeText(
+                    requireContext(),
+                    "JSON-RPC error with message ${sideEffects.text}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
 }
